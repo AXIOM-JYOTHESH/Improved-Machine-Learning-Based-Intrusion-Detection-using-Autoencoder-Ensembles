@@ -1,29 +1,28 @@
 from Kitsune import Kitsune
 import numpy as np
 import time
+from pathlib import Path
 
 ##############################################################################
 # Kitsune a lightweight online network intrusion detection system based on an ensemble of autoencoders (kitNET).
 # For more information and citation, please see our NDSS'18 paper: Kitsune: An Ensemble of Autoencoders for Online Network Intrusion Detection
 
-# This script demonstrates Kitsune's ability to incrementally learn, and detect anomalies in recorded a pcap of the Mirai Malware.
-# The demo involves an m-by-n dataset with n=115 dimensions (features), and m=100,000 observations.
-# Each observation is a snapshot of the network's state in terms of incremental damped statistics (see the NDSS paper for more details)
+# This script demonstrates how to run Kitsune on your own capture file.
+# Provide a pcap, pcapng, or pre-parsed tsv file and Kitsune will learn online
+# during the grace periods, then emit anomaly scores for the remaining traffic.
 
 #The runtimes presented in the paper, are based on the C++ implimentation (roughly 100x faster than the python implimentation)
 ###################  Last Tested with Anaconda 3.6.3   #######################
 
-# Load Mirai pcap (a recording of the Mirai botnet malware being activated)
-# The first 70,000 observations are clean...
-print("Unzipping Sample Capture...")
-import zipfile
-with zipfile.ZipFile("mirai.zip","r") as zip_ref:
-    zip_ref.extractall()
-
-
 # File location
-path = "mirai.pcap" #the pcap, pcapng, or tsv file to process.
-packet_limit = np.inf #the number of packets to process
+path = "captured.pcap" # replace with your pcap, pcapng, or tsv file
+packet_limit = np.inf # the number of packets to process
+
+if not Path(path).exists():
+    raise FileNotFoundError(
+        "Example input file not found. Update 'path' in example.py to point to "
+        "your own .pcap, .pcapng, or .tsv file before running this script."
+    )
 
 # KitNET params:
 maxAE = 10 #maximum size for any autoencoder in the ensemble layer
@@ -48,10 +47,11 @@ while True:
         break
     RMSEs.append(rmse)
 stop = time.time()
-print("Complete. Time elapsed: "+ str(stop - start))
+print("Complete. Time elapsed: " + str(stop - start))
 
 
-# Here we demonstrate how one can fit the RMSE scores to a log-normal distribution (useful for finding/setting a cutoff threshold \phi)
+# Here we demonstrate how one can fit the RMSE scores to a log-normal
+# distribution (useful for finding/setting a cutoff threshold phi)
 from scipy.stats import norm
 benignSample = np.log(RMSEs[FMgrace+ADgrace+1:100000])
 logProbs = norm.logsf(np.log(RMSEs), np.mean(benignSample), np.std(benignSample))

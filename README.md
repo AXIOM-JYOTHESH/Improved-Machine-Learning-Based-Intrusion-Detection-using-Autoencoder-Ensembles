@@ -13,6 +13,7 @@ Based on:
 - The full original `Kitsune-py` project is included here.
 - A Colab notebook is provided for a `git clone` based workflow.
 - This folder is intended to be uploaded as its own GitHub repository and used directly from Google Colab.
+- Large sample captures and the `Datsets` folder were removed to keep the repository smaller and easier to clone.
 
 ## Colab workflow
 
@@ -66,6 +67,7 @@ while True:
 - `tshark` is preferred for parsing pcaps when available.
 - If `tshark` is not available, the code falls back to `scapy`.
 - After the first run, a generated `.tsv` can be reused for faster later runs.
+- The old `mirai` sample files are not required by the Kitsune code itself. They were only used by the original demo script.
 
 ## License
 
