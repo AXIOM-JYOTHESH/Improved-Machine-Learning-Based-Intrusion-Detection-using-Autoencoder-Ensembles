@@ -406,7 +406,7 @@ cdef class incStatDB:
         cdef incStat incS
         incS = self.HT.get(ID+"_"+str(Lambda))
         if incS is None:  # does not already exist
-            return [np.na]*3
+            return [np.nan]*3
         else:
             return incS.allstats_1D()
 
@@ -419,7 +419,7 @@ cdef class incStatDB:
         cdef incStat incS
         incS = self.HT.get(ID1 + "_" + str(Lambda))
         if incS is None:  # does not exist
-            return [np.na]*2
+            return [np.nan]*2
 
         # find relevant cov entry
         return incS.cov_pcc(ID2)
